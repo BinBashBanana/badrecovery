@@ -2,4 +2,4 @@
 
 olymer is an explote for chrome book
 
-release date unset
+Release date: October 1 2024
