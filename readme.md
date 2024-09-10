@@ -1,5 +1,5 @@
 # olybmmer
 
-olymer is an explote for chrome book
+olybmmer is an exploit for chromebook
 
-Release date: October 1 2024
+# Release date: October 1 2024
