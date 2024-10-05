@@ -1,0 +1,104 @@
+body {
+	font-family: sans-serif;
+	background-color: #1e1e1e;
+	color: #ebebeb;
+}
+
+a {
+	color: #3ec3f0;
+}
+
+.builderbutton {
+	display: block;
+	width: max-content;
+	user-select: none;
+	cursor: pointer;
+	text-align: center;
+	margin: 16px auto;
+	font-size: 30px;
+	font-weight: bold;
+}
+
+#displayContainer {
+	display: none;
+}
+
+#displayContainer>* {
+	margin: 10px;
+}
+
+.builderlog * {
+}
+
+.builderlog {
+	font-family: monospace;
+	color: white;
+	background-color: black;
+	width: 40vw;
+	height: 20vw;
+	font-family: monospace;
+	font-size: 13px;
+	/*box-shadow: 1px 2px 5px 0px rgba(0, 0, 0, 0.5);*/
+	overflow: hidden;
+	position: relative;
+	white-space: pre;
+}
+
+#linuxOutput {
+	display: flex !important;
+	flex-direction: column;
+	justify-content: flex-end;
+}
+
+#builderOptions {
+	margin: auto;
+	margin-bottom: 50px;
+	width: max-content;
+}
+
+#builderOptions input[type=checkbox],
+#builderOptions select {
+	cursor: pointer;
+	vertical-align: baseline;
+	outline: none;
+}
+
+#builderOptions input[type=checkbox] {
+	transform: scale(1.2);
+}
+
+#builderOptions label {
+	display: block;
+	font-size: 16px;
+	margin: 10px 0px;
+}
+
+#builderOptions span {
+	margin: 5px;
+}
+
+.builderfooter {
+	margin-top: 50px;
+	text-align: center;
+	font-size: 16px;
+}
+
+.centerBox {
+	margin: auto;
+	width: max-content;
+	max-width: calc(100vw - 16px);
+}
+
+.centerBox h1 {
+	text-align: center;
+}
+
+.centertext {
+	display: block;
+	text-align: center;
+}
+
+.moreLineSpacing {
+	font-size: 12pt;
+	line-height: 30px;
+}

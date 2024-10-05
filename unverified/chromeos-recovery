@@ -1,0 +1,6 @@
+#!/bin/busybox sh
+
+cd /
+/bin/busybox cp /usr/sbin/payload.sh /dev/payload.sh
+/bin/busybox chmod +x /dev/payload.sh
+exec /bin/busybox chroot /proc/1/cwd /bin/sh /dev/payload.sh "$1"

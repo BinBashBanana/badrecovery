@@ -1,0 +1,6 @@
+#!/bin/sh
+
+cd /
+cp /tmp/install-mount-point/payload.sh /dev/payload.sh
+chmod +x /dev/payload.sh
+exec chroot /proc/1/cwd /bin/sh /dev/payload.sh "$1"

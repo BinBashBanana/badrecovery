@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>BadRecovery web builder</title>
+		<link rel="stylesheet" href="assets/style.css">
+	</head>
+	<body>
+		<div class="centerBox">
+			<h1>BadRecovery web builder</h1>
+			<a href="." class="centertext">Home</a>
+			<p>
+				Follow the steps <a target="_blank" href="https://github.com/BinBashBanana/badrecovery?tab=readme-ov-file#preparing-an-image">here</a>
+				to find the right file to upload here. Do not upload a zip file; you must unzip it and use the bin file inside.
+				<br>Before pressing start, you may select any of the options below. Note that "Internal disk" is only applicable for the postinst_sym type.
+				<br>Press the start button to select your file. The builder will start up and your built image will automatically download when finished.
+			</p>
+			<div id="builderOptions">
+				<h3>Options</h3>
+				<label><select name="type">
+					<option value="">auto</option>
+					<option value="postinst">postinst</option>
+					<option value="postinst_sym">postinst_sym</option>
+					<option value="persist">persist</option>
+					<option value="basic">basic</option>
+					<option value="unverified">unverified</option>
+				</select> <span>Type</span></label>
+				<label><select name="internal_disk">
+					<option value="mmcblk0">mmcblk0 (eMMC)</option>
+					<option value="mmcblk1">mmcblk1 (eMMC)</option>
+					<option value="nvme0n1">nvme0n1 (NVMe)</option>
+					<option value="sda">sda (other SSD)</option>
+					<option value="sdb">sdb (other SSD)</option>
+					<option value="hda">hda (HDD)</option>
+				</select> <span>Internal disk</span></label>
+				<label><input type="checkbox" name="debug"> <span>Show debug messages</span></label>
+			</div>
+			<a href="javascript:void(0)" class="builderbutton disabled" id="startButton">Start</a>
+			<a href="javascript:void(0)" class="builderbutton" id="downloadButton" style="display: none;">Download</a>
+		</div>
+		<div class="centerBox">
+			<div id="displayContainer">
+				<div>
+					<div class="label">Main Output</div>
+					<div id="builderOutput" class="builderlog"></div>
+				</div>
+				<div>
+					<div class="label">Linux Output</div>
+					<div id="screen_container">
+						<div id="linuxOutput" class="builderlog"></div>
+						<canvas style="display: none;"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="builderfooter">Powered by <a href="https://github.com/buildroot/buildroot">Buildroot</a> and <a href="https://github.com/copy/v86">v86</a></div>
+		<script src="assets/hterm_all.min.js"></script>
+		<script src="assets/zip.min.js"></script>
+		<script src="assets/libv86.js"></script>
+		<script src="assets/webbuilder.js"></script>
+	</body>
+</html>
