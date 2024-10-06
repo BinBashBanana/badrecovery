@@ -30,6 +30,7 @@ To get the script, run these commands on a linux machine:
 ```
 git clone https://github.com/BinBashBanana/badrecovery
 cd badrecovery
+chmod +x ./build_badrecovery.sh
 ```
 
 To modify a recovery image using the script, run
