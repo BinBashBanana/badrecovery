@@ -5,6 +5,8 @@ leveraging a vulnerability in recovery images to get arbitrary code execution or
 
 The exploit and writeup were released to the public on October 5th, 2024.
 
+You can read the writeup [here](./writeup.md).
+
 ## How to use
 
 You will need:
@@ -156,7 +158,7 @@ Big thanks to the testers:
 
 - Juliet (celes)
 - M_Wsecond (lars)
-- Kelp Seastem (peppy, nissa)
+- Kelpsea Stem (peppy, nissa)
 - Kxtz (relm)
 - Desvert (peach-pi)
 - WeirdTreeThing (trogdor)
