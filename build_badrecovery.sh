@@ -6,7 +6,7 @@ SCRIPT_DIR=${SCRIPT_DIR:-"."}
 
 set -eE
 
-SCRIPT_DATE="2024-10-01"
+SCRIPT_DATE="2024-10-07"
 
 echo "┌────────────────────────────────────────────────────────────────┐"
 echo "│ Welcome to the BadRecovery builder                             │"
@@ -328,11 +328,17 @@ setup_persist() {
 }
 
 find_unallocated_sectors() {
-	local allgaps gapstart
-	if allgaps=$(sfdisk -F "$1" | grep "^\s*[0-9]"); then
+	local allgaps gapstart gapsize difference
+	if allgaps=$("$SFDISK" -F "$1" | grep "^\s*[0-9]"); then
 		while read gap; do
 			gapstart=$(echo "$gap" | awk '{print $1}')
-			if [ "$(echo "$gap" | awk '{print $2}')" -ge "$gapstart" ] && [ "$(echo "$gap" | awk '{print $3}')" -ge "$2" ]; then
+			gapsize=$(echo "$gap" | awk '{print $3}')
+			difference=$((gapstart - $3))
+			if [ "$difference" -lt 0 ]; then
+				: $((gapstart -= difference))
+				: $((gapsize -= difference))
+			fi
+			if [ "$(echo "$gap" | awk '{print $2}')" -ge "$gapstart" ] && [ "$gapsize" -ge "$2" ]; then
 				echo "$gapstart"
 				return
 			fi
@@ -342,7 +348,7 @@ find_unallocated_sectors() {
 }
 
 move_blocking_partitions() {
-	local part_table part_starts physical_part_table needs_move move_sizes total_move_size started this_num this_start this_size new_end gapstart next_gap
+	local part_table part_starts physical_part_table needs_move move_sizes total_move_size started this_num this_start this_size new_end gapstart
 	part_table=$("$CGPT" show -q "$1")
 	part_starts=$(echo "$part_table" | awk '{print $1}' | sort -n)
 	physical_part_table=()
@@ -380,13 +386,11 @@ move_blocking_partitions() {
 	log_debug "sizes: ${move_sizes[@]}"
 	log_debug "total sectors to move: $total_move_size"
 
-	gapstart=$(find_unallocated_sectors "$1" "$total_move_size") || :
-	[ -n "$gapstart" ] || fail "Not enough unpartitioned space in image."
-	log_debug "gap start: $gapstart"
-	next_gap=0
 	for i in "${!needs_move[@]}"; do
-		suppress "$SFDISK" -N "${needs_move[$i]}" --move-data "$1" <<<"$((gapstart + next_gap))"
-		: $((next_gap+=${move_sizes[$i]}))
+		gapstart=$(find_unallocated_sectors "$1" "${move_sizes[$i]}" "$new_end") || :
+		[ -n "$gapstart" ] || fail "Not enough unpartitioned space in image."
+		log_debug "gap start: $gapstart"
+		suppress "$SFDISK" -N "${needs_move[$i]}" --move-data "$1" <<<"$gapstart"
 	done
 }
 

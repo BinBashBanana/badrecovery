@@ -2,7 +2,7 @@
 
 [Home](https://github.com/BinBashBanana/badrecovery)
 
-Last updated: 2024-10-05 12:52 AM PDT
+Last updated: 2024-10-06 7:07 PM PDT
 
 ChromeOS recovery images are official tools signed by Google that consumers can install on a USB drive to reinstall ChromeOS onto
 Chromebooks and Chromeboxes in case something goes wrong.
@@ -155,7 +155,7 @@ So, I didn't actually read all of chromeos-install. I had missed one key detail,
 Postinst runs off ROOT-A on the internal disk, mounted without any verification.
 
 Above, I said that due to the change introduced in r86, ROOT-A on the internal disk would end up being the same filesystem as the one on stateful when overflowed.
-Of course, we could ignore what happens to stateful, and place a binary at `/postinst` in the overflowing filesystem.
+Of course, we could ignore what happens to stateful, and place an executable at `/postinst` in the overflowing filesystem.
 
 And this was the result:  
 ![image](assets/images/code_execution.jpg)  
