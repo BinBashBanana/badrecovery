@@ -150,10 +150,6 @@ To determine if you can use this, follow these in order:
 - Does your device show `03` or lower as the last digits of the kernver (kernel version) on the recovery screen (press TAB, look at the line that starts with "TPM")? → YES
 - Higher than `03`? → NO
 
-## Known issues
-
-- FWMP doesn't remove on some newer devices (nissa, brya(?), corsola(?))
-
 ## Credits
 
 - OlyB/BinBashBanana - most of the work here

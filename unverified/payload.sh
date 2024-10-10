@@ -53,22 +53,32 @@ echo "Setting block_devmode=0 in crossystem"
 crossystem block_devmode=0
 echo "...$?"
 
-echo "Removing FWMP"
-# note: undef may fail on TPM 1.2 devices
-# note: undef isn't implemented in tpmc before r72
-# if tpmc says code 0x18b, the FWMP space already doesn't exist (on TPM 2.0 at least)
-# if undef failed for any reason other than above, try to write 0x0 instead
-tpmc_out=$(tpmc undef 0x100a 2>&1)
-tpmc_code=$?
-if [ $tpmc_code -ne 0 ]; then
-	if echo "$tpmc_out" | grep -q "code 0x18b$"; then
-		tpmc_code=0
-	else
+has_fwmp() {
+	local result
+	result=$(tpmc read 0x100a 0x28 2>/dev/null) || return 1
+	set -- $result
+	[ "$#" -eq 40 ] || return 1
+	shift 4
+	for i; do
+		[ "$i" = 0 ] || return 0
+	done
+	return 1
+}
+
+if has_fwmp; then
+	echo "Removing FWMP"
+	# note: undef may fail on TPM 1.2 devices
+	# note: undef isn't implemented in tpmc before r72
+	# if tpmc says code 0x18b, the FWMP space already doesn't exist (on TPM 2.0 at least)
+	# if undef failed for any reason other than above, try to write 0x0 instead
+	tpmc undef 0x100a
+	tpmc_code=$?
+	if [ $tpmc_code -ne 0 ]; then
 		tpmc write 0x100a 76 28 10 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 		tpmc_code=$?
 	fi
+	echo "...$tpmc_code"
 fi
-echo "...$tpmc_code"
 
 get_fixed_dst_drive() {
 	local dev

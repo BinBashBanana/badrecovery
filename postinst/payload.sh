@@ -65,22 +65,55 @@ echo "Setting block_devmode=0 in crossystem"
 crossystem block_devmode=0
 echo "...$?"
 
-echo "Removing FWMP"
-# note: undef may fail on TPM 1.2 devices
-# note: undef isn't implemented in tpmc before r72
-# if tpmc says code 0x18b, the FWMP space already doesn't exist (on TPM 2.0 at least)
-# if undef failed for any reason other than above, try to write 0x0 instead
-tpmc_out=$(tpmc undef 0x100a 2>&1)
-tpmc_code=$?
-if [ $tpmc_code -ne 0 ]; then
-	if echo "$tpmc_out" | grep -q "code 0x18b$"; then
-		tpmc_code=0
+has_fwmp() {
+	local result
+	result=$(tpmc read 0x100a 0x28 2>/dev/null) || return 1
+	set -- $result
+	[ "$#" -eq 40 ] || return 1
+	shift 4
+	for i; do
+		[ "$i" = 0 ] || return 0
+	done
+	return 1
+}
+
+has_platform_fwmp() {
+	local result
+	result=$(tpmc getp 0x100a 2>/dev/null) || return 1
+	[ $((${result##* } & 3)) -ne 3 ] || return 0
+	return 1
+}
+
+if has_fwmp; then
+	echo "Removing FWMP"
+	if tpmc getver | grep -q "vendor 43524f53$" && crossystem "devsw_boot?1" "mainfw_type?recovery" >/dev/null; then
+		echo "FWMP removal may not work due to being in developer recovery mode."
+		echo "If you get an error, try again in verified recovery mode."
+	fi
+	if has_platform_fwmp; then
+		mount -t tmpfs -o mode=0755 none /usb/var
+		mkdir -p -m 0777 /usb/run/dbus /usb/var/lib/tpm_manager
+		chroot /usb /usr/bin/dbus-daemon --system --fork >/dev/null 2>&1
+		chroot /usb /usr/sbin/trunksd
+		chroot /usb /usr/bin/sudo -b -u tpm_manager -g tpm_manager /usr/sbin/tpm_managerd
+		chroot /usb /usr/bin/gdbus wait --system --timeout 5 org.chromium.TpmManager
+		chroot /usb /usr/bin/tpm_manager_client take_ownership >/dev/null
+		printf "\x76\x28\x10\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0" | chroot /usb /usr/bin/tpm_manager_client write_space --index=0x100a --file=/dev/stdin
+		echo "...$?"
 	else
-		tpmc write 0x100a 76 28 10 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+		# note: undef may fail on TPM 1.2 devices
+		# note: undef isn't implemented in tpmc before r72
+		# if tpmc says code 0x18b, the FWMP space already doesn't exist (on TPM 2.0 at least)
+		# if undef failed for any reason other than above, try to write 0x0 instead
+		tpmc undef 0x100a
 		tpmc_code=$?
+		if [ $tpmc_code -ne 0 ]; then
+			tpmc write 0x100a 76 28 10 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+			tpmc_code=$?
+		fi
+		echo "...$tpmc_code"
 	fi
 fi
-echo "...$tpmc_code"
 
 echo "Recovering ROOT-A"
 dark_output dd if="$TARGET_DEVICE_P"5 of="$TARGET_DEVICE_P"3 bs=$((1024 * 1024)) count=64 conv=notrunc
