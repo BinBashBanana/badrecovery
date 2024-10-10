@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPT_DATE="[2024-10-01]"
+SCRIPT_DATE="[2024-10-10]"
 
 TARGET_DEVICE_P="${1%[0-9]*}"
 

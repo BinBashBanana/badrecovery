@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPT_DATE="[2024-10-01]"
+SCRIPT_DATE="[2024-10-10]"
 
 # spinner is always the 2nd /bin/sh
 spinner_pid=$(pgrep /bin/sh | head -n 2 | tail -n 1)
