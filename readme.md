@@ -124,10 +124,10 @@ When BadRecovery finishes, you will usually be able to skip the 5 minute develop
 </tr>
 <tr>
 	<td>unverified</td>
-	<td>version &le; 41 / version &le; 47 (WP off) / any version (developer mode NOT blocked)</td>
+	<td>version &le; 41 / version &le; 47 (WP off) / any version (developer mode NOT blocked) / after doing oobescape</td>
 	<td>
 	Unverified ROOT-A, developer mode only!
-	Use this for very old devices or for testing.
+	Use this for getting a root shell on oobescape DOES NOT REMOVE FWMP IN THIS CASE, and for very old devices or for testing.
 	This is an intended feature, not a bug.
 	</td>
 </tr>
